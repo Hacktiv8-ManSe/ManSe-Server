@@ -16,7 +16,7 @@ function connect(callback) {
     callback(error);
   });
 }
-
+connect()
 function getDb() {
   return db;
 }
