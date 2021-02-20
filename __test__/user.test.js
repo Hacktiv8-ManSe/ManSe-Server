@@ -47,7 +47,7 @@ beforeAll(async done => {
 
 afterAll(async done => {
   try {
-    await User.deleteByEmail(user.email)
+    await User.deleteAll()
     done()
   } catch (err) {
     done(err)
@@ -55,10 +55,10 @@ afterAll(async done => {
 })
 
 // ==================== REGISTER ==================== //
-describe(`POST /users/register`, () => {
+describe(`POSTregister`, () => {
   test(`Success`, (done) => {
     request(app)
-    .post('/users/register')
+    .post('/register')
     .send({
       username: 'tester',
       email: 'test@mail.com',
@@ -82,7 +82,7 @@ describe(`POST /users/register`, () => {
 
   test(`Success2`, (done) => {
     request(app)
-    .post('/users/register')
+    .post('/register')
     .send({
       username: 'testerB',
       email: 'testb@mail.com',
@@ -106,7 +106,7 @@ describe(`POST /users/register`, () => {
 
   test("failed because of email isn't unique", (done) => {
     request(app)
-    .post('/users/register')
+    .post('/register')
     .send({
       name: 'tester2',
       email: 'test@mail.com',
@@ -129,7 +129,7 @@ describe(`POST /users/register`, () => {
 
   test("failed because of invalid email", (done) => {
     request(app)
-    .post('/users/register')
+    .post('/register')
     .send({
       name: 'tester3',
       email: 'test3',
@@ -152,7 +152,7 @@ describe(`POST /users/register`, () => {
 
   test("failed because of empty data", (done) => {
     request(app)
-    .post('/users/register')
+    .post('/register')
     .send({
       name: '',
       email: '',
@@ -179,7 +179,7 @@ describe(`POST /users/register`, () => {
 
   test("failed because of password length", (done) => {
     request(app)
-    .post('/users/register')
+    .post('/register')
     .send({
       name: 'tester4',
       email: 'test4@mail.com',
@@ -202,13 +202,13 @@ describe(`POST /users/register`, () => {
 })
 
 // ==================== LOGIN ==================== //
-describe(`POST /users/login`, () => {
+describe(`POST /login`, () => {
   test(`Success`, (done) => {
     request(app)
-    .post('/users/login')
+    .post('/login')
     .send({
-      email: 'test@mail.com',
-      password: 'test123'
+      email: 'haniiusertest@gmail.com',
+      password: '123456'
     })
     .end((err, res) => {
       if (err) return done(err)
@@ -220,10 +220,10 @@ describe(`POST /users/login`, () => {
 
   test(`Wrong email`, (done) => {
     request(app)
-    .post('/users/login')
+    .post('/login')
     .send({
-      email: 'test@mail.com',
-      password: 'test123'
+      email: 'haniiusertest@gmail.com',
+      password: '123456'
     })
     .end((err, res) => {
       if (err) return done(err)
@@ -235,10 +235,10 @@ describe(`POST /users/login`, () => {
 
   test(`Wrong password`, (done) => {
     request(app)
-    .post('/users/login')
+    .post('/login')
     .send({
-      email: 'test@mail.com',
-      password: 'test1234'
+      email: 'haniiusertest@gmail.com',
+      password: '1234564'
     })
     .end((err, res) => {
       if (err) return done(err)
@@ -250,10 +250,10 @@ describe(`POST /users/login`, () => {
 
   test(`Email which isn't registered in database`, (done) => {
     request(app)
-    .post('/users/login')
+    .post('/login')
     .send({
       email: 'faketest@mail.com',
-      password: 'test'
+      password: 'test123123'
     })
     .end((err, res) => {
       if (err) return done(err)
@@ -265,7 +265,7 @@ describe(`POST /users/login`, () => {
 
   test(`No email and password input`, (done) => {
     request(app)
-    .post('/users/login')
+    .post('/login')
     .end((err, res) => {
       if (err) return done(err)
       expect(res.status).toBe(401)

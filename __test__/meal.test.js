@@ -50,7 +50,7 @@ beforeAll(async done => {
 
 afterAll(async done => {
   try {
-    await User.deleteByEmail(user.email)
+    await User.deleteAll()
     done()
   } catch (err) {
     done(err)
