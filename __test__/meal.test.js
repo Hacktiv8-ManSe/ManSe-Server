@@ -1,9 +1,10 @@
 const request = require('supertest');
-// const app = require('../app')
-const app = require('../bin/http')
+const app = require('../app')
+// const app = require('../bin/http')
 
 const USER_COLLECTION = process.env.USER_COLLECTION
 const {MongoClient} = require('mongodb');
+const { connect } = require('../config/mongodb.js')
 
 // const { User } = require('../models/index')
 const User = require('../models/User')
@@ -13,7 +14,7 @@ const { generateToken, verifyToken } = require('../helpers/jwt')
 // ***** INITIALIZE ***** //
 let user = {
   "photo": "url",
-  "email": "hanii@gmail.com",
+  "email": "haniimealtest@gmail.com",
   "password": "123456",
   "name": "Hani A",
   "age": 17,
@@ -25,52 +26,36 @@ let user = {
 let userToken, idMeal, idSponnacolar
 userToken = 'temporary'
 
+let unauthorizedUserToken = generateToken({
+  _id: 123123,
+  email: "rtyhjkljhgftyuik@mail.com"
+})
+
+
 let connection;
 let db;
 
-beforeAll(async () => {
-  console.log('>>> beforeAll RUNNING');
-  connection = await MongoClient.connect("mongodb://localhost:27017", {
-    useNewUrlParser: true,
-  });
-  db = await connection.db(USER_COLLECTION);
-  let data = await User.register(user)
-  console.log(data);
-});
+beforeAll(async done => {
+  try {
+    await connect()
+    await User.register(user)
+    const userData = await User.findByEmail(user.email)
+    const { _id, email } = userData
+    userToken = generateToken({ _id, email })
+    done()
+  } catch (err) {
+    done(err)
+  }
+})
 
-afterAll(async () => {
-  await connection.close();
-  await db.close();
-});
-
-// beforeAll((done) => {
-//   console.log('>>> beforeAll RUNNING');
-//   User.register(user)
-//   .then((data) => {
-//     console.log('>>> beforeAll data=', data);
-//     payload = { id: data.ops[0]._id, email: data.ops[0].email }
-//     userToken = generateToken(payload)
-//     done()
-//   })
-//   .catch((err) => {
-//     done(err)
-//   })
-// })
-
-// afterAll((done) => {
-//   if(process.env.NODE_ENV === 'test') {
-//     User.destroy({where:{}})
-//     .then(() => {
-//       return User.destroy({where:{}})
-//     })
-//     .then(() => {
-//       done()
-//     })
-//     .catch((err) => {
-//       done(err)
-//     })
-//   }
-// })
+afterAll(async done => {
+  try {
+    await User.deleteByEmail(user.email)
+    done()
+  } catch (err) {
+    done(err)
+  }
+})
 
 
 // ==================== CREATE ==================== //
@@ -107,15 +92,15 @@ describe('Create a new meal', function() {
       if (err) done (err);
       expect(res.statusCode).toEqual(401)
       expect(res.body).toHaveProperty('message')
-      expect(res.body.message).toEqual('Please provide a token!')
+      expect(res.body.message).toEqual('Please login first!')
       done()
     })
   })
 
-  it('Failed create a product with empty string', function(done) {
+  it('Failed create a meal with empty string', function(done) {
     const payload = {id: ""}
     request(app)
-    .post('/products')
+    .post('/meals')
     .set('access_token', userToken)
     .set('Content-Type', 'application/json')
     .send(payload)
@@ -149,7 +134,6 @@ describe('Delete a meal', function(){
     })
   })
 
-
   it('Failed delete a product without access token', function(done) {
     request(app)
     .delete(`/meals/${idMeal}`)
@@ -160,6 +144,20 @@ describe('Delete a meal', function(){
       expect(res.body).toHaveProperty('message')
       expect(res.body.message).toEqual('Please Login First')
       // expect(res.body.message).toEqual('Please provide a token!')
+      done()
+    })
+  })
+
+  it('Failed delete a product with unauthorized access token', function(done) {
+    request(app)
+    .delete(`/meals/${idMeal}`)
+    .set('access_token', unauthorizedUserToken)
+    .set('Content-Type', 'application/json')
+    .end(function(err, res) {
+      if (err) done (err);
+      expect(res.statusCode).toEqual(401)
+      expect(res.body).toHaveProperty('message')
+      expect(res.body.message).toEqual('Unauthorized!')
       done()
     })
   })
