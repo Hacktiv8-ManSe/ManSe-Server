@@ -4,24 +4,20 @@ const { hashPassword } = require('../helpers/bcryptjs')
 
 //nyoba beforeAll & afterAll ga bisa @_@
 
-// ***** INITIALIZE ***** //
-let user = {
-  username: 'tester',
-  email: 'test@mail.com',
-  password: 'test123',
-  gender: 'male',
-  age: '25',
-  weight: '65',
-  height: '170',
-  photo: ''
-}
-
-// ==================== REGISTER ==================== //
 describe(`POST /users/register`, () => {
   test(`Success`, (done) => {
     request(app)
     .post('/users/register')
-    .send(user)
+    .send({
+      username: 'tester',
+      email: 'test@mail.com',
+      password: 'test123',
+      gender: 'male',
+      age: '25',
+      weight: '65',
+      height: '170',
+      photo: ''
+    })
     .end((err, res) => {
       if (err) {
         return done(err)
@@ -36,7 +32,16 @@ describe(`POST /users/register`, () => {
   test(`Success2`, (done) => {
     request(app)
     .post('/users/register')
-    .send(user)
+    .send({
+      username: 'testerB',
+      email: 'testb@mail.com',
+      password: 'test123',
+      gender: 'male',
+      age: '25',
+      weight: '65',
+      height: '170',
+      photo: ''
+    })
     .end((err, res) => {
       if (err) {
         return done(err)
@@ -51,7 +56,16 @@ describe(`POST /users/register`, () => {
   test("failed because of email isn't unique", (done) => {
     request(app)
     .post('/users/register')
-    .send(user)
+    .send({
+      name: 'tester2',
+      email: 'test@mail.com',
+      password: 'test123',
+      gender: 'male',
+      age: '25',
+      weight: '65',
+      height: '170',
+      photo: ''
+    })
     .end((err, res) => {
       if (err) {
         return done(err)
@@ -65,7 +79,16 @@ describe(`POST /users/register`, () => {
   test("failed because of invalid email", (done) => {
     request(app)
     .post('/users/register')
-    .send(user)
+    .send({
+      name: 'tester3',
+      email: 'test3',
+      password: 'test123',
+      gender: 'male',
+      age: '25',
+      weight: '65',
+      height: '170',
+      photo: ''
+    })
     .end((err, res) => {
       if (err) {
         return done(err)
@@ -79,7 +102,16 @@ describe(`POST /users/register`, () => {
   test("failed because of empty data", (done) => {
     request(app)
     .post('/users/register')
-    .send(user)
+    .send({
+      name: '',
+      email: '',
+      password: 'test123',
+      gender: 'male',
+      age: '25',
+      weight: '',
+      height: '170',
+      photo: ''
+    })
     .end((err, res) => {
       if (err) {
         return done(err)
@@ -118,7 +150,6 @@ describe(`POST /users/register`, () => {
   })
 })
 
-// ==================== LOGIN ==================== //
 describe(`POST /users/login`, () => {
   test(`Success`, (done) => {
     request(app)
@@ -192,7 +223,6 @@ describe(`POST /users/login`, () => {
   })
 })
 
-// ==================== UPDATE ==================== //
 describe(`PUT /users/:id`, () => {
   test(`Success`, (done) => {
     request(app)
@@ -267,7 +297,16 @@ describe(`PUT /users/:id`, () => {
   test("failed because of empty data", (done) => {
     request(app)
     .put('/users/1')
-    .send(user)
+    .send({
+      name: '',
+      email: '',
+      password: 'test123',
+      gender: 'male',
+      age: '25',
+      weight: '',
+      height: '170',
+      photo: ''
+    })
     .end((err, res) => {
       if (err) {
         return done(err)
