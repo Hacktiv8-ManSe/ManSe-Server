@@ -1,10 +1,9 @@
 const request = require('supertest');
 const app = require('../app')
 
-const { User, Product } = require('../models/index')
+const { User } = require('../models/index')
 const { hashPassword, comparePassword} = require('../helpers/bcrypt')
 const { generateToken, verifyToken } = require('../helpers/jwt')
-const models = require('../models/index')
 
 // ***** INITIALIZE ***** //
 let user = {
