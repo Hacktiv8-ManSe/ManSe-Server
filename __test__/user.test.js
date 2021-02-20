@@ -1,27 +1,74 @@
 const request = require('supertest');
 const app = require('../app')
-const { hashPassword } = require('../helpers/bcryptjs')
+// const app = require('../bin/http')
 
-//nyoba beforeAll & afterAll ga bisa @_@
+const USER_COLLECTION = process.env.USER_COLLECTION
+const {MongoClient} = require('mongodb');
+const { connect } = require('../config/mongodb.js')
+
+// const { User } = require('../models/index')
+const User = require('../models/User')
+const { hashPassword, comparePassword} = require('../helpers/bcryptjs')
+const { generateToken, verifyToken } = require('../helpers/jwt')
 
 // ***** INITIALIZE ***** //
 let user = {
-  username: 'tester',
-  email: 'test@mail.com',
-  password: 'test123',
-  gender: 'male',
-  age: '25',
-  weight: '65',
-  height: '170',
-  photo: ''
+  "photo": "url",
+  "email": "haniiusertest@gmail.com",
+  "password": "123456",
+  "name": "Hani A",
+  "age": 17,
+  "gender": "female",
+  "weight": 45,
+  "height": 150,
+  "meals": []
 }
+let userToken, idUser, idSponnacolar
+userToken = 'temporary'
+
+let unauthorizedUserToken = generateToken({
+  _id: 123123,
+  email: "dsudhsudhsdh@mail.com"
+})
+
+beforeAll(async done => {
+  try {
+    await connect()
+    await User.register(user)
+    const userData = await User.findByEmail(user.email)
+    const { _id, email } = userData
+    idUser = _id
+    userToken = generateToken({ _id, email })
+    done()
+  } catch (err) {
+    done(err)
+  }
+})
+
+afterAll(async done => {
+  try {
+    await User.deleteByEmail(user.email)
+    done()
+  } catch (err) {
+    done(err)
+  }
+})
 
 // ==================== REGISTER ==================== //
 describe(`POST /users/register`, () => {
   test(`Success`, (done) => {
     request(app)
     .post('/users/register')
-    .send(user)
+    .send({
+      username: 'tester',
+      email: 'test@mail.com',
+      password: 'test123',
+      gender: 'male',
+      age: '25',
+      weight: '65',
+      height: '170',
+      photo: ''
+    })
     .end((err, res) => {
       if (err) {
         return done(err)
@@ -36,7 +83,16 @@ describe(`POST /users/register`, () => {
   test(`Success2`, (done) => {
     request(app)
     .post('/users/register')
-    .send(user)
+    .send({
+      username: 'testerB',
+      email: 'testb@mail.com',
+      password: 'test123',
+      gender: 'male',
+      age: '25',
+      weight: '65',
+      height: '170',
+      photo: ''
+    })
     .end((err, res) => {
       if (err) {
         return done(err)
@@ -51,7 +107,16 @@ describe(`POST /users/register`, () => {
   test("failed because of email isn't unique", (done) => {
     request(app)
     .post('/users/register')
-    .send(user)
+    .send({
+      name: 'tester2',
+      email: 'test@mail.com',
+      password: 'test123',
+      gender: 'male',
+      age: '25',
+      weight: '65',
+      height: '170',
+      photo: ''
+    })
     .end((err, res) => {
       if (err) {
         return done(err)
@@ -65,7 +130,16 @@ describe(`POST /users/register`, () => {
   test("failed because of invalid email", (done) => {
     request(app)
     .post('/users/register')
-    .send(user)
+    .send({
+      name: 'tester3',
+      email: 'test3',
+      password: 'test123',
+      gender: 'male',
+      age: '25',
+      weight: '65',
+      height: '170',
+      photo: ''
+    })
     .end((err, res) => {
       if (err) {
         return done(err)
@@ -79,7 +153,16 @@ describe(`POST /users/register`, () => {
   test("failed because of empty data", (done) => {
     request(app)
     .post('/users/register')
-    .send(user)
+    .send({
+      name: '',
+      email: '',
+      password: 'test123',
+      gender: 'male',
+      age: '25',
+      weight: '',
+      height: '170',
+      photo: ''
+    })
     .end((err, res) => {
       if (err) {
         return done(err)
@@ -196,7 +279,8 @@ describe(`POST /users/login`, () => {
 describe(`PUT /users/:id`, () => {
   test(`Success`, (done) => {
     request(app)
-    .put('/users/1')
+    .put(`/users/${idUser}`)
+    .set('access_token', userToken)
     .send({
       username: 'ms.tester',
       email: 'test@mail.com',
@@ -218,9 +302,34 @@ describe(`PUT /users/:id`, () => {
     })
   })
 
+  test("failed because of invalid/unauthorized token", (done) => {
+    request(app)
+    .put(`/users/${idUser}`)
+    .set('access_token', unauthorizedUserToken)
+    .send({
+      name: 'tester',
+      email: 'testb@mail.com',
+      password: 'test123',
+      gender: 'male',
+      age: '25',
+      weight: '65',
+      height: '170',
+      photo: ''
+    })
+    .end((err, res) => {
+      if (err) {
+        return done(err)
+      }
+      expect(res.status).toBe(400)
+      expect(res.body).toHaveProperty('message', 'sorry, email has been registered with other account')
+      done()
+    })
+  })
+
   test("failed because of email isn't unique", (done) => {
     request(app)
-    .put('/users/1')
+    .put(`/users/${idUser}`)
+    .set('access_token', userToken)
     .send({
       name: 'tester',
       email: 'testb@mail.com',
@@ -243,7 +352,8 @@ describe(`PUT /users/:id`, () => {
 
   test("failed because of invalid email", (done) => {
     request(app)
-    .put('/users/1')
+    .put(`/users/${idUser}`)
+    .set('access_token', userToken)
     .send({
       name: 'tester',
       email: 'test',
@@ -266,8 +376,18 @@ describe(`PUT /users/:id`, () => {
 
   test("failed because of empty data", (done) => {
     request(app)
-    .put('/users/1')
-    .send(user)
+    .put(`/users/${idUser}`)
+    .set('access_token', userToken)
+    .send({
+      name: '',
+      email: '',
+      password: 'test123',
+      gender: 'male',
+      age: '25',
+      weight: '',
+      height: '170',
+      photo: ''
+    })
     .end((err, res) => {
       if (err) {
         return done(err)
@@ -284,7 +404,8 @@ describe(`PUT /users/:id`, () => {
 
   test("failed because of password length", (done) => {
     request(app)
-    .put('/users/1')
+    .put(`/users/${idUser}`)
+    .set('access_token', userToken)
     .send({
       name: 'tester',
       email: 'test@mail.com',

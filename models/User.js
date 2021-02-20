@@ -27,6 +27,9 @@ class User {
   static delete(id) {
     return this.database().deleteOne({ _id: ObjectID(id) })
   }
+  static deleteByEmail(email) {
+    return this.database().deleteOne({ email })
+  }
 }
 
 module.exports = User
