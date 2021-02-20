@@ -22,7 +22,7 @@ async function indeks() {
   // )
   console.log(`Index created: ${indexEmail}`)
 }
-
+connect()
 function getDb() {
   return db
 }
