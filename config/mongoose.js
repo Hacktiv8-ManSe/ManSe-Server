@@ -8,7 +8,8 @@ async function connect() {
     await mongoose.connect(URI + DB, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      useCreateIndex: true
+      useCreateIndex: true,
+      useFindAndModify: false
     })
   } catch (err) {
     console.log(err, 'config/mongoose error')

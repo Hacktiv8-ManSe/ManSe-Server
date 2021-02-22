@@ -26,7 +26,7 @@ class UserController {
       const response = await User.findOneAndUpdate(
         { _id: id },
         { $set: req.body },
-        { new: true, returnOriginal: false }
+        { new: true, returnOriginal: false, runValidators: true }
       )
       res.status(200).json(response)
     } catch (err) {
