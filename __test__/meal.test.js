@@ -103,6 +103,63 @@ describe('Create a new meal', function () {
   })
 })
 
+// ==================== READ ==================== //
+describe('Read the meals', function () {
+  // ***** TEST ***** //
+  it('Success find all meals', function (done) {
+    request(app)
+      .get('/meals')
+      .set('access_token', userToken)
+      .set('Content-Type', 'application/json')
+      .end(function (err, res) {
+        if (err) done(err)
+        expect(res.statusCode).toEqual(200)
+        expect(res.body).toHaveProperty('data')
+        done()
+      })
+  })
+
+  it('Failed find all meals without access token', function (done) {
+    request(app)
+      .get('/meals')
+      .set('Content-Type', 'application/json')
+      .end(function (err, res) {
+        if (err) done(err)
+        expect(res.statusCode).toEqual(401)
+        expect(res.body).toHaveProperty('message')
+        expect(res.body.message).toEqual('Please Login First')
+        done()
+      })
+  })
+
+  it('Success find one meal', function (done) {
+    request(app)
+      .get(`/meals/${dateMealCreate}`)
+      .set('access_token', userToken)
+      .set('Content-Type', 'application/json')
+      .end(function (err, res) {
+        if (err) done(err)
+        expect(res.statusCode).toEqual(201)
+        expect(res.body).toHaveProperty('data')
+        done()
+      })
+  })
+
+  it('Failed find one meal without access token', function (done) {
+    request(app)
+      .get(`/meals/${dateMealCreate}`)
+      .set('Content-Type', 'application/json')
+      .end(function (err, res) {
+        if (err) done(err)
+        expect(res.statusCode).toEqual(401)
+        expect(res.body).toHaveProperty('message')
+        expect(res.body.message).toEqual('Please Login First')
+        done()
+      })
+  })
+
+})
+
 // ==================== DELETE ==================== //
 describe('Delete a meal', function () {
   // ***** TEST ***** //

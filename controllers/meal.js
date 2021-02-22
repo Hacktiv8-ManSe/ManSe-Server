@@ -37,7 +37,7 @@ class MealController {
     try {
       const { _id: user } = req.UserData
       const response = await Meal.findOne({ user })
-      res.status(201).json(response)
+      res.status(200).json({data: response})
     } catch (err) {
       next(err)
     }
@@ -48,7 +48,7 @@ class MealController {
       const { date } = req.params
       const { _id: user } = req.UserData
       const response = await Meal.findOne({ user, date })
-      res.status(200).json(response)
+      res.status(201).json({data: response})
     } catch (err) {
       next(err)
     }

@@ -19,8 +19,8 @@ const schema = mongoose.Schema(
   { collection: 'meals' }
 )
 
-schema.pre('save', function (next) {
-  next()
-})
+// schema.pre('save', function (next) {
+//   next()
+// })
 
 module.exports = mongoose.model('Meals', schema)
