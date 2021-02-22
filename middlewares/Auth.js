@@ -9,13 +9,16 @@ class Auth {
         let payload = verifyToken(access_token)
         const user = await User.findById(payload._id)
         !user
-          ? res.status(401).json({ message: 'Please Login First' })
+          ? res.status(404).json({ message: 'user not found!' })
           : ((req.UserData = payload), next())
       } else {
         res.status(401).json({ message: 'Please Login First' })
       }
     } catch (err) {
-      res.status(500).json(err)
+      // res.status(500).json(err)
+      next({
+        name: 'InvalidToken'
+      })
     }
   }
 
