@@ -22,6 +22,11 @@ const errorHandlers = (err, req, res, next) => {
         statusCode = 401
         message = 'Wrong Email or Password'
         break
+      case "InvalidToken":
+        res.status(403).json({
+          message: "You dont have access!"
+        })
+        break
       default:
         break
     }
