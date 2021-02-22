@@ -13,7 +13,6 @@ async function connect() {
     })
   } catch (err) {
     console.log(err, 'config/mongoose error')
-    // process.exit()
   }
 }
 

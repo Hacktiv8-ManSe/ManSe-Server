@@ -4,7 +4,7 @@ class UserController {
   static async findAll(req, res, next) {
     try {
       const users = await User.find()
-      res.status(200).json(users)
+      res.status(200).json({ data: users })
     } catch (err) {
       next(err)
     }
@@ -14,7 +14,7 @@ class UserController {
     try {
       const { id } = req.params
       const user = await User.findById(id)
-      res.status(200).json(user)
+      res.status(200).json({ data: user})
     } catch (err) {
       next(err)
     }

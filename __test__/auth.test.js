@@ -98,6 +98,25 @@ afterAll(async done => {
   done()
 })
 
+// ==================== GET ==================== //
+describe('GET', () => {
+  test('Should return default server message', done => {
+    request(app)
+      .get('/')
+      .set('Accept', 'application/json')
+      .end((err, res) => {
+        if (err) {
+          return done(err)
+        }
+        expect(res.status).toBe(200)
+        expect(res.body).toHaveProperty('message')
+        expect(res.body.message).toEqual('NutriSee API v1')
+        done()
+      })
+  })
+})
+
+
 // ==================== REGISTER ==================== //
 describe('POST /register', () => {
   test('201 Success', done => {
@@ -265,6 +284,36 @@ describe('POST /login', () => {
         if (err) return done(err)
         expect(res.status).toBe(401)
         expect(res.body).toHaveProperty('message', `Wrong Email or Password`)
+        done()
+      })
+  })
+})
+
+// ==================== READ ==================== //
+describe('Read user', function () {
+  // ***** TEST ***** //
+  it('Success find all users', function (done) {
+    request(app)
+      .get('/users')
+      .set('access_token', userToken)
+      .set('Content-Type', 'application/json')
+      .end(function (err, res) {
+        if (err) done(err)
+        expect(res.statusCode).toEqual(200)
+        expect(res.body).toHaveProperty('data')
+        done()
+      })
+  })
+
+  it('Success find one user', function (done) {
+    request(app)
+      .get('/users/' + idUser)
+      .set('access_token', userToken)
+      .set('Content-Type', 'application/json')
+      .end(function (err, res) {
+        if (err) done(err)
+        expect(res.statusCode).toEqual(200)
+        expect(res.body).toHaveProperty('data')
         done()
       })
   })
