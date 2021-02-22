@@ -6,15 +6,18 @@ let generateToken = (obj) => {
 }
 
 let verifyToken = (token) => {
-    try {
-        const decoded = jwt.verify(token, process.env.SECRET);
-        return decoded
-    } catch(err) {
-        throw {
-            status: 401,
-            message: `Please Login First`
-        }
-    }
+    const decoded = jwt.verify(token, process.env.SECRET);
+    return decoded
+    // try {
+    //     const decoded = jwt.verify(token, process.env.SECRET);
+    //     return decoded
+    // } catch(err) {
+        // throw {
+        //     status: 401,
+        //     message: `Please Login First`
+        // }
+        // next({name: 'InvalidToken'})
+    // }
 }
 
 module.exports = { generateToken, verifyToken }
