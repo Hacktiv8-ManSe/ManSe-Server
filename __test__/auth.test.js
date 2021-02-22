@@ -67,9 +67,29 @@ let unauthorizedUserToken = generateToken({
   email: 'dsudhsudhsdh@mail.com'
 })
 
+let emailInit = {
+	email: 'mity23@mail.com',
+  password: '123456',
+  name: 'mity',
+  photo: 'sadKEK',
+  birthday: '1998-03-12',
+  gender: 'male',
+  weight: 95,
+  height: 174
+}
+
+let invalidId = '60332a76af90be5719d6011b'
+
 beforeAll(async done => {
   // coonect to mongo
   await connect()
+  request(app)
+      .post('/register')
+      .set('Accept', 'application/json')
+      .send(emailInit)
+      .end((err, res) => {
+        done()
+      })
   done()
 })
 // Cleans up database between each test
@@ -295,7 +315,7 @@ describe(`PUT /users/:id`, () => {
     request(app)
       .put(`/users/${idUser}`)
       .set('access_token', userToken)
-      .send(userInit)
+      .send({email: emailInit.email})
       .end((err, res) => {
         if (err) {
           return done(err)
@@ -328,7 +348,7 @@ describe(`PUT /users/:id`, () => {
           return done(err)
         }
         expect(res.status).toBe(400)
-        expect(res.body).toHaveProperty('message', `email is invalid`)
+        expect(res.body).toHaveProperty('message', [`Email is invalid`])
         done()
       })
   })
@@ -367,7 +387,7 @@ describe(`PUT /users/:id`, () => {
         expect(res.status).toBe(400)
         expect(res.body).toHaveProperty(
           'message',
-          'password has to be at least 6 characters'
+          ['password has to be at least 6 characters']
         )
         done()
       })
@@ -375,7 +395,7 @@ describe(`PUT /users/:id`, () => {
 
   test('failed because user not found', done => {
     request(app)
-      .put(`/users/${idUser}`)
+      .put(`/users/${invalidId}`)
       .set('access_token', userToken)
       .end((err, res) => {
         if (err) {
@@ -424,12 +444,13 @@ describe(`DELETE /users/:id`, () => {
 
   test('failed because user not found', done => {
     request(app)
-      .delete(`/users/${idUser}notfound`)
+      .delete(`/users/${invalidId}`)
       .set('access_token', userToken)
       .end((err, res) => {
         if (err) {
           return done(err)
         }
+        console.log(res, '<<<<< ')
         expect(res.status).toBe(404)
         expect(res.body).toHaveProperty('message', `user not found!`)
         done()
