@@ -22,8 +22,13 @@ class Auth {
   static async authorization(req, res, next) {
     try {
       const { id } = req.params
-      const { _id } = req.UserData
-      id !== _id ? res.status(403).json({ message: 'Forbidden' }) : next()
+      const user = await User.findById(id)
+      // Invalid user. Stranger detected.
+      !user
+        ? res.status(404).json({ message: 'user not found!' })
+        : user._id === id
+        ? res.status(403).json({ message: 'You dont have access' })
+        : next()
     } catch (err) {
       res.status(500).json(err)
     }
