@@ -6,9 +6,9 @@ const schema = mongoose.Schema(
     date: Date,
     foodEaten: [
       {
-        _id: String,
+        id: String,
         name: String,
-        photo: String,
+        image_url: String,
         calories: Number
       }
     ]
