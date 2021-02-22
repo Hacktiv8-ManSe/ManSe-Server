@@ -1,5 +1,5 @@
 const app = require('../app')
-const { connect } = require('../config/mongodb')
+const { connect } = require('../config/mongoose')
 const port = process.env.PORT || 5001
 
 //listen

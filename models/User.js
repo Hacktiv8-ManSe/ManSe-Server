@@ -1,35 +1,56 @@
-const { ObjectID } = require('mongodb')
-const { getDb } = require('../config/mongodb')
-const USER_COLLECTION = process.env.USER_COLLECTION
+const mongoose = require('mongoose')
+const { hashPassword } = require('../helpers/bcryptjs')
+const { bmr: getBmr } = require('../helpers/bmr')
 
-class User {
-  static database() {
-    return getDb().collection(USER_COLLECTION)
-  }
-  static register(data) {
-    return this.database().insertOne(data)
-  }
-  static findAll() {
-    return this.database().find().toArray()
-  }
-  static findById(id) {
-    return this.database().findOne({ _id: ObjectID(id) })
-  }
-  static findByEmail(email) {
-    return this.database().findOne({ email })
-  }
-  static update(id, data) {
-    return this.database().findOneAndUpdate(
-      { _id: ObjectID(id) },
-      { $set: data }
-    )
-  }
-  static delete(id) {
-    return this.database().deleteOne({ _id: ObjectID(id) })
-  }
-  static deleteByEmail(email) {
-    return this.database().deleteOne({ email })
-  }
-}
+const schema = mongoose.Schema(
+  {
+    photo: { type: String, default: '' },
+    email: {
+      type: String,
+      // required: [true, 'You need this!'],
+      required: [true, `email can't be empty`],
+      unique: true,
+      validate: {
+        validator: function (v) {
+          return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g.test(v)
+        },
+        // message: props => `${props.value} is not a valid email!`
+        message: props => `Email is invalid`
+      }
+    },
+    password: {
+      type: String,
+      // required: [true, 'No password? Are you sure?'],
+      required: [true, `password can't be empty`],
+      // minLength: [6, 'Too short.'],
+      minLength: [6, 'password has to be at least 6 characters']
+    },
+    name: {
+      type: String,
+      // required: [true, 'Your name..'],
+      required: [true, `name can't be empty`],
+      minLength: [2, 'Please at least 2 characters']
+    },
+    birthday: { type: Date, default: new Date('1997-01-01') },
+    gender: {
+      type: String,
+      enum: ['female', 'male', 'others'],
+      default: 'others'
+    },
+    bodystats: {
+      weight: { type: Number, default: 0 },
+      height: { type: Number, default: 0 }
+    },
+    bmr: { type: Number, default: 0 }
+  },
+  { collection: 'users' }
+)
 
-module.exports = User
+schema.pre('save', function (next) {
+  this.password = hashPassword(this.password)
+  this.bmr = getBmr(this.birthday, this.weight, this.height, this.gender)
+  this.birthday = new Date(this.birthday)
+  next()
+})
+
+module.exports = mongoose.model('Users', schema)

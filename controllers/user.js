@@ -1,12 +1,12 @@
-const User = require('../models/User')
+const { User } = require('../models')
 
 class UserController {
   static async findAll(req, res, next) {
     try {
-      const users = await User.findAll()
+      const users = await User.find()
       res.status(200).json(users)
     } catch (err) {
-      res.status(500).json(err)
+      next(err)
     }
   }
 
@@ -16,29 +16,32 @@ class UserController {
       const user = await User.findById(id)
       res.status(200).json(user)
     } catch (err) {
-      res.status(500).json(err)
+      next(err)
     }
   }
 
   static async update(req, res, next) {
     try {
       const { id } = req.params
-      const { email, password, name, age, gender, weight, height } = req.body
-      const response = await User.update(id, req.body)
+      const response = await User.findOneAndUpdate(
+        { _id: id },
+        { $set: req.body },
+        { new: true, returnOriginal: false }
+      )
       res.status(200).json(response)
     } catch (err) {
-      res.status(500).json(err)
+      next(err)
     }
   }
 
   static async delete(req, res, next) {
     try {
       const { id } = req.params
-      // const { _id: id } = req.UserData
-      const response = await User.delete(id)
-      res.status(200).json(response)
+      await User.deleteOne({ _id: id })
+      // delete meals here
+      res.status(200).json({ message: 'Success delete your account' })
     } catch (err) {
-      res.status(500).json(err)
+      next(err)
     }
   }
 }
