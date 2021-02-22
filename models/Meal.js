@@ -6,7 +6,10 @@ const schema = mongoose.Schema(
     date: Date,
     foodEaten: [
       {
-        id: String,
+        id: {
+          type: String,
+          required: [true, 'Must not contains empty string!']
+        },
         name: String,
         image_url: String,
         calories: Number

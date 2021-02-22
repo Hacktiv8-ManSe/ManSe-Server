@@ -68,7 +68,7 @@ let unauthorizedUserToken = generateToken({
 })
 
 let emailInit = {
-	email: 'mity23@mail.com',
+  email: 'mity23@mail.com',
   password: '123456',
   name: 'mity',
   photo: 'sadKEK',
@@ -84,12 +84,12 @@ beforeAll(async done => {
   // coonect to mongo
   await connect()
   request(app)
-      .post('/register')
-      .set('Accept', 'application/json')
-      .send(emailInit)
-      .end((err, res) => {
-        done()
-      })
+    .post('/register')
+    .set('Accept', 'application/json')
+    .send(emailInit)
+    .end((err, res) => {
+      done()
+    })
   done()
 })
 // Cleans up database between each test
@@ -315,7 +315,7 @@ describe(`PUT /users/:id`, () => {
     request(app)
       .put(`/users/${idUser}`)
       .set('access_token', userToken)
-      .send({email: emailInit.email})
+      .send({ email: emailInit.email })
       .end((err, res) => {
         if (err) {
           return done(err)
@@ -385,10 +385,9 @@ describe(`PUT /users/:id`, () => {
           return done(err)
         }
         expect(res.status).toBe(400)
-        expect(res.body).toHaveProperty(
-          'message',
-          ['password has to be at least 6 characters']
-        )
+        expect(res.body).toHaveProperty('message', [
+          'password has to be at least 6 characters'
+        ])
         done()
       })
   })
@@ -450,7 +449,7 @@ describe(`DELETE /users/:id`, () => {
         if (err) {
           return done(err)
         }
-        console.log(res, '<<<<< ')
+        // console.log(res, '<<<<< ')
         expect(res.status).toBe(404)
         expect(res.body).toHaveProperty('message', `user not found!`)
         done()
