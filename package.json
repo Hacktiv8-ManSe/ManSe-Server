@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "dev": "NODE_ENV=development nodemon bin/http.js",
-    "test": "NODE_ENV=test npx jest --detectOpenHandles --forceExit --verbose",
+    "test": "NODE_ENV=test npx jest --verbose --collectCoverage --detectOpenHandles --forceExit",
     "start": "node app.js"
   },
   "jest": {
