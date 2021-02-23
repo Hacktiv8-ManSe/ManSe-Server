@@ -48,10 +48,10 @@ class RecipeController {
 
   static async findByIngredients(req, res, next) {
     try {
-      const { ingridients } = req.query // array
+      const { ingredients } = req.query // array
       const response = await axios.get(
         baseUrl +
-          `findByIngredients?ingredients=${ingridients}&apiKey=${SPOONACULAR_API}`
+          `findByIngredients?ingredients=${ingredients}&apiKey=${SPOONACULAR_API}`
       )
       res.status(200).json(response.data)
     } catch (err) {
@@ -61,12 +61,14 @@ class RecipeController {
 
   static async findByName(req, res, next) {
     try {
-      const { name } = req.query // array
-      console.log(name)
+      // console.log('  >>> query=', req.query)
+      const name = req.query.query
+      // console.log('  >>> name=', name)
       const response = await axios.get(
         baseUrl +
-          `complexSearch?query=chick&addRecipeInformation=true&apiKey=${SPOONACULAR_API}`
+          `complexSearch?query=${name}&addRecipeInformation=true&apiKey=${SPOONACULAR_API}`
       )
+      // console.log('  >>> response=', response)
       let recipes = []
       response.data.results.map(el => {
         const data = {
@@ -85,7 +87,7 @@ class RecipeController {
       })
       res.status(200).json(recipes)
     } catch (err) {
-      console.log(err, '???')
+      // console.log(err, '???')
       next(err)
     }
   }
