@@ -219,3 +219,104 @@ describe('Delete a meal', function () {
       })
   })
 })
+
+// ==================== THIRD party API ==================== //
+describe('Third party API', function () {
+  // ***** PREDICT - CLARIFAI ***** //
+  it('Success POST /predicts/fridge', function (done) {
+    const payload = {image_url: "https://i1.wp.com/blog.hellofresh.com/wp-content/uploads/2017/01/meal-kit-box-fridge-square.jpg?resize=1024%2C939&ssl=1"}
+    request(app)
+      .post(`/predicts/fridge`)
+      .set('access_token', userToken)
+      .set('Content-Type', 'application/json')
+      .send(payload)
+      .end(function (err, res) {
+        if (err) done(err)
+        expect(res.statusCode).toEqual(200)
+        expect(res.body).toEqual(
+          expect.arrayContaining([])
+        )
+        done()
+      })
+  })
+
+  it('Success POST /predicts/meal', function (done) {
+    const payload = {image_url: "https://www.qsrmagazine.com/sites/default/files/styles/story_page/public/phut_0.jpg?itok=h30EAnkk"}
+    request(app)
+      .post(`/predicts/meal`)
+      .set('access_token', userToken)
+      .set('Content-Type', 'application/json')
+      .send(payload)
+      .end(function (err, res) {
+        if (err) done(err)
+        expect(res.statusCode).toEqual(200)
+        expect(res.body).toEqual(
+          expect.arrayContaining([])
+        )
+        done()
+      })
+  })
+
+  // ***** RECIPES - SPONNACULAR ***** //
+  it('Success GET /recipes', function (done) {
+    request(app)
+      .get(`/recipes`)
+      .set('access_token', userToken)
+      .set('Content-Type', 'application/json')
+      .end(function (err, res) {
+        if (err) done(err)
+        expect(res.statusCode).toEqual(200)
+        done()
+      })
+  })
+
+  it('Success GET /findByIngredients', function (done) {
+    const ingredients = 'potato,milk'
+    request(app)
+      .get(`/recipes/findByIngredients?ingredients=${ingredients}`)
+      .set('access_token', userToken)
+      .set('Content-Type', 'application/json')
+      .end(function (err, res) {
+        if (err) done(err)
+        expect(res.statusCode).toEqual(200)
+        expect(res.body).toEqual(
+          expect.arrayContaining([])
+        )
+        done()
+      })
+  })
+
+  it('Success GET /findByName', function (done) {
+    const name = 'chick'
+    request(app)
+      .get(`/recipes/findByName?query=${name}`)
+      .set('access_token', userToken)
+      .set('Content-Type', 'application/json')
+      .end(function (err, res) {
+        if (err) done(err)
+        expect(res.statusCode).toEqual(200)
+        expect(res.body).toEqual(
+          expect.arrayContaining([])
+        )
+        done()
+      })
+  })
+
+  it('Success GET /:id', function (done) {
+    const id = 195438
+    request(app)
+      .get(`/recipes/${id}`)
+      .set('access_token', userToken)
+      .set('Content-Type', 'application/json')
+      .end(function (err, res) {
+        if (err) done(err)
+        expect(res.statusCode).toEqual(200)
+        expect(res.body).toEqual(
+          expect.arrayContaining([])
+        )
+        done()
+      })
+  })
+
+
+})

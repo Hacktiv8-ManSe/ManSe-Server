@@ -9,7 +9,7 @@ class PredictController {
       response.map(el => meal.push(el.name))
       res.status(200).json(meal)
     } catch (err) {
-      console.log(err)
+      // console.log(err)
       next(err)
     }
   }
@@ -21,7 +21,7 @@ class PredictController {
       response.map(el => meal.push(el.name))
       res.status(200).json(meal)
     } catch (err) {
-      console.log(err)
+      // console.log(err)
       next(err)
     }
   }
