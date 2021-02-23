@@ -1,6 +1,6 @@
 const errorHandlers = (err, req, res, next) => {
   // console.log(err.name, 'some error msg')
-  // console.log(err, 'some error')
+  console.log(err, 'some error')
   let message = err.message | 'Something went wrong!'
   let statusCode = err.statusCode | 500
   switch (err.name) {
