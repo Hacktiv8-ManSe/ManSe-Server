@@ -49,14 +49,12 @@ class RecipeController {
   static async findByIngredients(req, res, next) {
     try {
       const { ingridients } = req.query // array
-      console.log(ingridients)
       const response = await axios.get(
         baseUrl +
           `findByIngredients?ingredients=${ingridients}&apiKey=${SPOONACULAR_API}`
       )
       res.status(200).json(response.data)
     } catch (err) {
-      console.log(err, '???')
       next(err)
     }
   }
