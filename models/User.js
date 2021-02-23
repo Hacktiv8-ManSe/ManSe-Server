@@ -48,7 +48,12 @@ const schema = mongoose.Schema(
 
 schema.pre('save', function (next) {
   this.password = hashPassword(this.password)
-  this.bmr = getBmr(this.birthday, this.weight, this.height, this.gender)
+  this.bmr = getBmr(
+    this.birthday,
+    this.bodystats.weight,
+    this.bodystats.height,
+    this.gender
+  )
   this.birthday = new Date(this.birthday)
   next()
 })

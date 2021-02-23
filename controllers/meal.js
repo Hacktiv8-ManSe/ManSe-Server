@@ -20,14 +20,12 @@ class MealController {
         { upsert: true, returnOriginal: false, useFindAndModify: false }
       )
       const { user: user_id, date: res_date, foodEaten } = response
-      res
-        .status(201)
-        .json({
-          user: user_id,
-          date: res_date,
-          foodEaten,
-          message: 'Meal created successfully!'
-        })
+      res.status(201).json({
+        user: user_id,
+        date: res_date,
+        foodEaten,
+        message: 'Meal created successfully!'
+      })
     } catch (err) {
       next(err)
     }
@@ -37,7 +35,7 @@ class MealController {
     try {
       const { _id: user } = req.UserData
       const response = await Meal.findOne({ user })
-      res.status(200).json({data: response})
+      res.status(200).json({ data: response })
     } catch (err) {
       next(err)
     }
@@ -48,7 +46,7 @@ class MealController {
       const { date } = req.params
       const { _id: user } = req.UserData
       const response = await Meal.findOne({ user, date })
-      res.status(201).json({data: response})
+      res.status(201).json({ data: response })
     } catch (err) {
       next(err)
     }
@@ -62,7 +60,6 @@ class MealController {
         { user, date },
         { $pull: { foodEaten: { id } } }
       )
-      console.log(id, date)
       // res.status(201).json({ message: 'Meal deleted successfully!' })
       response.nModified
         ? res.status(200).json({ message: 'Meal deleted successfully!' })
