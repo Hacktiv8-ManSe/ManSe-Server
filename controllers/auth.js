@@ -5,7 +5,19 @@ const { generateToken } = require('../helpers/jwt')
 class AuthController {
   static async register(req, res, next) {
     try {
-      const response = await User.create(req.body)
+      const response = await User.create({
+        _id: req.body._id,
+        email: req.body.email,
+        password: req.body.password,
+        name: req.body.name,
+        photo: req.body.photo,
+        birthday: req.body.birthday,
+        gender: req.body.gender,
+        bodystats: {
+          weight: req.body.weight,
+          height: req.body.height
+        }
+      })
       const {
         _id,
         email,
