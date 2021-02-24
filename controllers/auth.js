@@ -5,12 +5,14 @@ const { generateToken } = require('../helpers/jwt')
 class AuthController {
   static async register(req, res, next) {
     try {
+      const pathImage = req.file.path
+      const imageUrl = req.protocol + '://' + req.get('host') + '/' + pathImage
       const response = await User.create({
         _id: req.body._id,
         email: req.body.email,
         password: req.body.password,
         name: req.body.name,
-        photo: req.body.photo,
+        photo: imageUrl,
         birthday: req.body.birthday,
         gender: req.body.gender,
         bodystats: {

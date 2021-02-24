@@ -90,3 +90,5 @@ pids
 # Yarn Integrity file
 .yarn-integrity
 
+# Multer file
+/uploads

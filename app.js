@@ -7,6 +7,7 @@ const cors = require('cors')
 const routers = require('./routers')
 
 //middleware / body parser
+app.use('/uploads', express.static('uploads'))
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cors())
