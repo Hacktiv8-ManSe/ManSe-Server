@@ -7,32 +7,40 @@ const unlinkAsync = promisify(fs.unlink)
 class PredictController {
   static async predictMeal(req, res, next) {
     try {
-      const pathImage = req.file.path
-      const { data } = await getImageUrl(pathImage)
-      const imageUrl = data.data.url
+      if (!req.file) {
+        throw new Error({ message: 'You must add some pict!' })
+      } else {
+        const pathImage = req.file && req.file.path
+        const { data } = await getImageUrl(pathImage)
+        const imageUrl = data.data.url
 
-      await unlinkAsync(req.file.path) // delete file after upload
+        await unlinkAsync(req.file.path) // delete file after upload
 
-      const response = await predictImage(imageUrl, 0.95)
-      let meal = []
-      response.map(el => meal.push(el.name))
-      res.status(200).json(meal)
+        const response = await predictImage(imageUrl, 0.95)
+        let meal = []
+        response.map(el => meal.push(el.name))
+        res.status(200).json(meal)
+      }
     } catch (err) {
       next(err)
     }
   }
   static async predictFridge(req, res, next) {
     try {
-      const pathImage = req.file.path
-      const { data } = await getImageUrl(pathImage)
-      const imageUrl = data.data.url
+      if (!req.file) {
+        throw new Error({ message: 'You must add some pict!' })
+      } else {
+        const pathImage = req.file && req.file.path
+        const { data } = await getImageUrl(pathImage)
+        const imageUrl = data.data.url
 
-      await unlinkAsync(req.file.path) // delete file after upload
+        await unlinkAsync(req.file.path) // delete file after upload
 
-      const response = await predictImage(imageUrl, 0.5)
-      let meal = []
-      response.map(el => meal.push(el.name))
-      res.status(200).json(meal)
+        const response = await predictImage(imageUrl, 0.5)
+        let meal = []
+        response.map(el => meal.push(el.name))
+        res.status(200).json(meal)
+      }
     } catch (err) {
       next(err)
     }
