@@ -14,7 +14,7 @@ class UserController {
     try {
       const { id } = req.params
       const user = await User.findById(id)
-      res.status(200).json({ data: user})
+      res.status(200).json({ data: user })
     } catch (err) {
       next(err)
     }
@@ -22,6 +22,11 @@ class UserController {
 
   static async update(req, res, next) {
     try {
+      const imageUrl = req.file
+        ? req.protocol + '://' + req.get('host') + '/' + req.file.path
+        : ''
+
+      req.body.photo = imageUrl
       const { id } = req.params
       const response = await User.findOneAndUpdate(
         { _id: id },

@@ -22,7 +22,12 @@ const predictImage = (url, min_value) => {
         }
         // UPDATE THE CODE BELOW TO ONE LINE TO MAXIMISE TEST.JS SCORE COVERAGE
         if (response.status.code !== 10000) {
-          reject('Received failed status: ' + response.status.description +'\n' +response.status.details)
+          reject(
+            'Received failed status: ' +
+              response.status.description +
+              '\n' +
+              response.status.details
+          )
           return
         }
         // res.status(200).json(response.outputs[0].data.concepts)
