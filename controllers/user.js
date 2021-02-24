@@ -22,8 +22,10 @@ class UserController {
 
   static async update(req, res, next) {
     try {
-      const pathImage = req.file.path
-      const imageUrl = req.protocol + '://' + req.get('host') + '/' + pathImage
+      const imageUrl = req.file
+        ? req.protocol + '://' + req.get('host') + '/' + req.file.path
+        : ''
+
       req.body.photo = imageUrl
       const { id } = req.params
       const response = await User.findOneAndUpdate(
