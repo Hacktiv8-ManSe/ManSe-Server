@@ -8,7 +8,7 @@ class PredictController {
   static async predictMeal(req, res, next) {
     try {
       if (!req.file) {
-        throw new Error({ message: 'You must add some pict!' })
+        next({ statusCode: 400, message: 'You must add some pict!' })
       } else {
         const pathImage = req.file && req.file.path
         const { data } = await getImageUrl(pathImage)
@@ -28,7 +28,7 @@ class PredictController {
   static async predictFridge(req, res, next) {
     try {
       if (!req.file) {
-        throw new Error({ message: 'You must add some pict!' })
+        next({ statusCode: 400, message: 'You must add some pict!' })
       } else {
         const pathImage = req.file && req.file.path
         const { data } = await getImageUrl(pathImage)
